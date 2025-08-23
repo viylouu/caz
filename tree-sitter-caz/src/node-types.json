@@ -14,6 +14,10 @@
         {
           "type": "parameter_list",
           "named": true
+        },
+        {
+          "type": "pkg",
+          "named": true
         }
       ]
     }
@@ -26,6 +30,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "decl_const",
+          "named": true
+        },
         {
           "type": "identifier",
           "named": true
@@ -111,6 +119,21 @@
     }
   },
   {
+    "type": "pkg",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_extern",
     "named": true,
     "fields": {},
@@ -118,6 +141,10 @@
       "multiple": true,
       "required": true,
       "types": [
+        {
+          "type": "decl_const",
+          "named": true
+        },
         {
           "type": "identifier",
           "named": true
@@ -142,11 +169,11 @@
     "named": true,
     "fields": {},
     "children": {
-      "multiple": true,
+      "multiple": false,
       "required": true,
       "types": [
         {
-          "type": "identifier",
+          "type": "pkg",
           "named": true
         }
       ]
@@ -298,6 +325,10 @@
     "type": "comment",
     "named": true,
     "extra": true
+  },
+  {
+    "type": "decl_const",
+    "named": true
   },
   {
     "type": "f16",

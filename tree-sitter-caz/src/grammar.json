@@ -35,8 +35,8 @@
           "name": "identifier"
         },
         {
-          "type": "STRING",
-          "value": "::"
+          "type": "SYMBOL",
+          "name": "decl_const"
         },
         {
           "type": "SYMBOL",
@@ -305,20 +305,17 @@
           "type": "CHOICE",
           "members": [
             {
-              "type": "REPEAT1",
-              "content": {
-                "type": "SEQ",
-                "members": [
-                  {
-                    "type": "SYMBOL",
-                    "name": "identifier"
-                  },
-                  {
-                    "type": "STRING",
-                    "value": "::"
-                  }
-                ]
-              }
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "SYMBOL",
+                  "name": "pkg"
+                },
+                {
+                  "type": "STRING",
+                  "value": "::"
+                }
+              ]
             },
             {
               "type": "BLANK"
@@ -356,6 +353,35 @@
       "type": "PATTERN",
       "value": "\"([^\"\\\\]|\\\\.)*\""
     },
+    "pkg": {
+      "type": "PREC_LEFT",
+      "value": 0,
+      "content": {
+        "type": "SEQ",
+        "members": [
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
+          },
+          {
+            "type": "REPEAT",
+            "content": {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "::"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    },
     "_preproc": {
       "type": "CHOICE",
       "members": [
@@ -382,23 +408,7 @@
         },
         {
           "type": "SYMBOL",
-          "name": "identifier"
-        },
-        {
-          "type": "REPEAT",
-          "content": {
-            "type": "SEQ",
-            "members": [
-              {
-                "type": "STRING",
-                "value": "::"
-              },
-              {
-                "type": "SYMBOL",
-                "name": "identifier"
-              }
-            ]
-          }
+          "name": "pkg"
         },
         {
           "type": "STRING",
@@ -418,8 +428,8 @@
           "name": "identifier"
         },
         {
-          "type": "STRING",
-          "value": "::"
+          "type": "SYMBOL",
+          "name": "decl_const"
         },
         {
           "type": "SYMBOL",
@@ -442,6 +452,10 @@
     "number": {
       "type": "PATTERN",
       "value": "\\d+"
+    },
+    "decl_const": {
+      "type": "STRING",
+      "value": ":~"
     },
     "comment": {
       "type": "TOKEN",

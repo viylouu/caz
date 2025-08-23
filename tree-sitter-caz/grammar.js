@@ -27,7 +27,7 @@ module.exports = grammar({
 
     function_definition: $ => seq(
       $.identifier,
-      '::',
+      $.decl_const,
       $.parameter_list_defn,
       '>>',
       $._type,
@@ -98,7 +98,7 @@ module.exports = grammar({
     ),
 
     function_call: $ => seq(
-      optional(repeat1(seq($.identifier, '::'))),
+      optional(seq($.pkg, '::')),
       $.identifier,
       $.parameter_list
     ),
@@ -112,6 +112,11 @@ module.exports = grammar({
 
     string: $ => /"([^"\\]|\\.)*"/,
 
+    pkg: $ => prec.left(seq(
+      $.identifier,
+      repeat(seq('::', $.identifier))
+    )),
+
     _preproc: $ => choice(
       $.preproc_import,
       $.preproc_extern
@@ -120,15 +125,14 @@ module.exports = grammar({
     preproc_import: $ => seq(
       '#imp',
       '<',
-      $.identifier,
-      repeat(seq('::', $.identifier)),
+      $.pkg,
       '>'
     ),
   
     preproc_extern: $ => seq(
       '#extern',
       $.identifier,
-      '::',
+      $.decl_const,
       $.parameter_list_defn,
       '>>',
       $._type
@@ -136,6 +140,7 @@ module.exports = grammar({
 
     identifier: $ => /[a-z]+/,
     number: $ => /\d+/,
+    decl_const: $ => ':~',
 
     comment: $ => token(choice(
       seq('//', /.*/),
