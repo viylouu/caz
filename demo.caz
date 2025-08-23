@@ -1,27 +1,3 @@
-// hello world.caz
-
-#imp <std::io>
-
-main :: (args: []str) >> raw {
-    io::println("hello world")
-}
-
-
-// hello world.ll
-
-; import println, or "puts"
-declare i32 @puts(ptr captures(none)) nounwind
-
-; string constant: "hello world\n"
-@.str0 = private constant [13 x i8] c"hello world\0A\00"
-
-define i32 @main(i32 %argc, i8** %argv) {
-    call i32 @puts(ptr @.str0)
-    ret i32 0
-}
-
-
-/*
 // glfw example
 
 #imp <lib::glfw>
@@ -54,4 +30,3 @@ main :: (args: []str) >> raw {
         swap_buffers(window)
     }
 }
-*/
