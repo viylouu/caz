@@ -1,0 +1,57 @@
+// hello world.caz
+
+#imp <std::io>
+
+main :: (args: []str) >> raw {
+    io::println("hello world")
+}
+
+
+// hello world.ll
+
+; import println, or "puts"
+declare i32 @puts(ptr captures(none)) nounwind
+
+; string constant: "hello world\n"
+@.str0 = private constant [13 x i8] c"hello world\0A\00"
+
+define i32 @main(i32 %argc, i8** %argv) {
+    call i32 @puts(ptr @.str0)
+    ret i32 0
+}
+
+
+/*
+// glfw example
+
+#imp <lib::glfw>
+#imp <lib::gl>
+
+#use glfw
+#use gl
+
+main :: (args: []str) >> raw {
+    assert(init(), "failed to init glfw")
+    #defer terminate() // moved to end of scope at compile time, and in reverse order (how odin does its ordering)
+
+    window := create_window(512, 512, "hello window", nil,nil) // returns a *glfw::Window
+    #defer destroy_window(window)
+
+    assert(window != nil, "failed to create window")
+
+    make_context_current(window)
+
+    // pretend i load opengl stuff here
+
+    swap_interval(1)
+
+    for !window_should_close(window) {
+        poll_events()
+
+        clear_color(1,1,1,1)
+        clear(COLOR_BUFFER_BIT)
+
+        swap_buffers(window)
+    }
+}
+*/
