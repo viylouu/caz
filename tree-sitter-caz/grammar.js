@@ -60,7 +60,19 @@ module.exports = grammar({
 
     primitive_type: $ => choice(
       'raw',
-      'str'
+      'str',
+
+      'i8',
+      'i16',
+      'i32',
+      'i64',
+      'u8',
+      'u16',
+      'u32',
+      'u64',
+      'f16',
+      'f32',
+      'f64'
     ),
 
     slice_type: $ => seq(
@@ -101,14 +113,25 @@ module.exports = grammar({
     string: $ => /"([^"\\]|\\.)*"/,
 
     _preproc: $ => choice(
-      $.preproc_import
+      $.preproc_import,
+      $.preproc_extern
     ),
 
     preproc_import: $ => seq(
-      '#imp ',
+      '#imp',
       '<',
-      seq($.identifier, repeat(seq('::', $.identifier))),
+      $.identifier,
+      repeat(seq('::', $.identifier)),
       '>'
+    ),
+  
+    preproc_extern: $ => seq(
+      '#extern',
+      $.identifier,
+      '::',
+      $.parameter_list_defn,
+      '>>',
+      $._type
     ),
 
     identifier: $ => /[a-z]+/,

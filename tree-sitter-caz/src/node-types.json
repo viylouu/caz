@@ -111,6 +111,33 @@
     }
   },
   {
+    "type": "preproc_extern",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "parameter_list_defn",
+          "named": true
+        },
+        {
+          "type": "primitive_type",
+          "named": true
+        },
+        {
+          "type": "slice_type",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_import",
     "named": true,
     "fields": {},
@@ -166,6 +193,10 @@
           "named": true
         },
         {
+          "type": "preproc_extern",
+          "named": true
+        },
+        {
           "type": "preproc_import",
           "named": true
         },
@@ -209,6 +240,10 @@
           "named": true
         },
         {
+          "type": "preproc_extern",
+          "named": true
+        },
+        {
           "type": "preproc_import",
           "named": true
         }
@@ -216,7 +251,11 @@
     }
   },
   {
-    "type": "#imp ",
+    "type": "#extern",
+    "named": false
+  },
+  {
+    "type": "#imp",
     "named": false
   },
   {
@@ -261,6 +300,34 @@
     "extra": true
   },
   {
+    "type": "f16",
+    "named": false
+  },
+  {
+    "type": "f32",
+    "named": false
+  },
+  {
+    "type": "f64",
+    "named": false
+  },
+  {
+    "type": "i16",
+    "named": false
+  },
+  {
+    "type": "i32",
+    "named": false
+  },
+  {
+    "type": "i64",
+    "named": false
+  },
+  {
+    "type": "i8",
+    "named": false
+  },
+  {
     "type": "identifier",
     "named": true
   },
@@ -283,6 +350,22 @@
   {
     "type": "string",
     "named": true
+  },
+  {
+    "type": "u16",
+    "named": false
+  },
+  {
+    "type": "u32",
+    "named": false
+  },
+  {
+    "type": "u64",
+    "named": false
+  },
+  {
+    "type": "u8",
+    "named": false
   },
   {
     "type": "{",
