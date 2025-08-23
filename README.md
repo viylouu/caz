@@ -1,8 +1,8 @@
-# Cas Language
+# Caz Language
 
-Cas is a low level qop lang (quiero lang) designed to be convinent for viylouu and zope
+Caz is a low level qop lang (quiero lang) designed to be convinent for viylouu and zope
 
-```cas
+```caz
 #imp <std::io>
 
 main :: (args: []str) >> raw {
