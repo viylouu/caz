@@ -1,6 +1,9 @@
- #imp <std::io>
+#imp <std::io>
 
+// commen1s
+/* comm2nts */
 main :: (args: []str) >> raw {
     io::println("hello world")
 }
 
+// string fix

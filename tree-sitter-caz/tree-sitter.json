@@ -1,0 +1,39 @@
+{
+  "$schema": "https://tree-sitter.github.io/tree-sitter/assets/schemas/config.schema.json",
+  "grammars": [
+    {
+      "name": "caz",
+      "camelcase": "Caz",
+      "title": "Caz",
+      "scope": "source.caz",
+      "file-types": [
+        "caz"
+      ],
+      "injection-regex": "^caz$",
+      "class-name": "TreeSitterCaz"
+    }
+  ],
+  "metadata": {
+    "version": "0.1.0",
+    "license": "MIT",
+    "description": "a low level qop lang designed for ease of use in game / engine dev",
+    "authors": [
+      {
+        "name": "viylouu",
+        "email": "viylouu@gmail.com"
+      }
+    ],
+    "links": {
+      "repository": "https://github.com/viylouu/caz"
+    }
+  },
+  "bindings": {
+    "c": true,
+    "go": true,
+    "node": true,
+    "python": true,
+    "rust": true,
+    "swift": true,
+    "zig": false
+  }
+}
