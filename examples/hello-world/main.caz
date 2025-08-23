@@ -1,5 +1,6 @@
-#imp <std::io>
+ #imp <std::io>
 
 main :: (args: []str) >> raw {
     io::println("hello world")
 }
+
