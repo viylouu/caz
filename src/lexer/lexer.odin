@@ -135,7 +135,7 @@ rule_seq :: proc(rules: ..Rule) -> Rule {
 grammars := [Token_Type]Rule{
     .tok_none = Rule{}, .tok_err = Rule{},
 
-    .tok_start = rule_repeat(rule_choice_ref(.tok_expr)),
+    .tok_start = rule_repeat(rule_choice_ref(.tok_expr, .tok_comment)),
 
     // yes i use ø for delimiters
     // call me weird
@@ -195,7 +195,10 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (suc
                 ok, new_pos, child := match_rule(rule.fields[0], input, pos, sym)
                 if !ok || new_pos == pos do break
                 pos = new_pos
-                if _, ok := child.? ; ok do append(&childs, ..child.?.fields)
+                if _, ok := child.? ; ok {
+                    if child.?.fields == nil do append(&childs, child.? or_else Token{})
+                    else do append(&childs, ..child.?.fields) 
+                }
             }
             return true, pos, Token{sym, "", childs[:]}
     }
