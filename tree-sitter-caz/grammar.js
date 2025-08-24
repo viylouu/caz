@@ -118,16 +118,28 @@ module.exports = grammar({
 
     _preproc: $ => choice(
       $.preproc_import,
+      $.preproc_library,
       $.preproc_extern,
       $.preproc_use,
       $.preproc_load
+    ),
+
+    preproc_library: $ => seq(
+      '#lib',
+      '<',
+      $.pkg,
+      '>'
     ),
 
     preproc_import: $ => seq(
       '#imp',
       '<',
       $.pkg,
-      '>'
+      '>',
+      optional(seq(
+        'as',
+        $.identifier
+      ))
     ),
   
     preproc_extern: $ => seq(

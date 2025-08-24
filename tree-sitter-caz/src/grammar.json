@@ -404,6 +404,10 @@
         },
         {
           "type": "SYMBOL",
+          "name": "preproc_library"
+        },
+        {
+          "type": "SYMBOL",
           "name": "preproc_extern"
         },
         {
@@ -413,6 +417,27 @@
         {
           "type": "SYMBOL",
           "name": "preproc_load"
+        }
+      ]
+    },
+    "preproc_library": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#lib"
+        },
+        {
+          "type": "STRING",
+          "value": "<"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "pkg"
+        },
+        {
+          "type": "STRING",
+          "value": ">"
         }
       ]
     },
@@ -434,6 +459,27 @@
         {
           "type": "STRING",
           "value": ">"
+        },
+        {
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": "as"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "identifier"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         }
       ]
     },

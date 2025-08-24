@@ -169,6 +169,25 @@
     "named": true,
     "fields": {},
     "children": {
+      "multiple": true,
+      "required": true,
+      "types": [
+        {
+          "type": "identifier",
+          "named": true
+        },
+        {
+          "type": "pkg",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
+    "type": "preproc_library",
+    "named": true,
+    "fields": {},
+    "children": {
       "multiple": false,
       "required": true,
       "types": [
@@ -258,6 +277,10 @@
           "named": true
         },
         {
+          "type": "preproc_library",
+          "named": true
+        },
+        {
           "type": "preproc_load",
           "named": true
         },
@@ -313,6 +336,10 @@
           "named": true
         },
         {
+          "type": "preproc_library",
+          "named": true
+        },
+        {
           "type": "preproc_load",
           "named": true
         },
@@ -329,6 +356,10 @@
   },
   {
     "type": "#imp",
+    "named": false
+  },
+  {
+    "type": "#lib",
     "named": false
   },
   {
@@ -373,6 +404,10 @@
   },
   {
     "type": "[]",
+    "named": false
+  },
+  {
+    "type": "as",
     "named": false
   },
   {
