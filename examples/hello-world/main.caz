@@ -1,12 +1,12 @@
-#lib <std::io>
+//#lib <std::io>
 
 //#imp <route::note::aaa>
 
 // commen1s
 /* comm2nts
 comm3nts */
-main :~ (args: []str) {
-    io::println("hello world")
+//main :~ (args: []str) {
+//    io::println("hello world")
 
     //route::note::aaa::wsg("cone")
 
@@ -14,7 +14,9 @@ main :~ (args: []str) {
         hello: guy = epic
         hi: guy ~ regula
     }*/
-}
+//}
 
 // string fix
 
+
+abc 123
