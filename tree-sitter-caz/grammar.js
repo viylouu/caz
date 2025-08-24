@@ -27,6 +27,7 @@ module.exports = grammar({
 
     function_definition: $ => seq(
       $.identifier,
+      ':',
       $.decl_const,
       $.parameter_list_defn,
       optional(seq('>>', $._type)),
@@ -53,7 +54,8 @@ module.exports = grammar({
 
     _type: $ => choice(
       $.primitive_type,
-      $.slice_type
+      $.slice_type,
+      $.identifier
       // todo: add more types
     ),
 
@@ -84,17 +86,38 @@ module.exports = grammar({
       repeat($._statement),
       '}'
     ),
+    
+    struct: $ => seq(
+      'struct',
+      repeat(seq('<<', $.identifier)),
+      $.struct_scope
+    ),
+
+    struct_scope: $ => seq(
+      '{',
+      repeat($.var_decl),
+      '}'
+    ),
+
+    var_decl: $ => seq(
+      $.identifier,
+      ':',
+      optional($._type),
+      choice($.decl_mut, $.decl_const),
+      $._expression
+    ),
 
     _statement: $ => choice(
       $.return_statement,
       $._preproc,
-      $.function_call
+      $.function_call,
+      $.var_decl
     ),
 
-    return_statement: $ => seq(
-      'return',
-      $._expression
-    ),
+    return_statement: $ => prec.right(seq(
+      'ret',
+      optional($._expression)
+    )),
 
     function_call: $ => seq(
       optional(seq($.pkg, '::')),
@@ -105,7 +128,8 @@ module.exports = grammar({
     _expression: $ => choice(
       $.identifier,
       $.number,
-      $.string
+      $.string,
+      $.struct
       // todo: more expressions
     ),
 
@@ -161,9 +185,12 @@ module.exports = grammar({
       $.parameter_list
     ),
 
-    identifier: $ => /[a-z]+/,
+    identifier: $ => /[a-zA-Z]+[a-zA-Z0-9_]*/,
     number: $ => /\d+/,
-    decl_const: $ => ':~',
+
+    decl_const: $ => '~',
+    decl_mut: $ => '=',
+    assign: $ => '=',
 
     comment: $ => token(choice(
       seq('//', /.*/),

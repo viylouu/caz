@@ -5,7 +5,12 @@
 comm3nts */
 main :~ (args: []str) {
     io::println("hello world")
-    //return x
+
+    abc :~ struct << epic_clAss {
+        hello: guy = epic
+        hi: guy ~ regula
+    }
 }
 
 // string fix
+
