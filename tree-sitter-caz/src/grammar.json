@@ -405,6 +405,10 @@
         {
           "type": "SYMBOL",
           "name": "preproc_extern"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_use"
         }
       ]
     },
@@ -455,6 +459,19 @@
         {
           "type": "SYMBOL",
           "name": "_type"
+        }
+      ]
+    },
+    "preproc_use": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#use"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "pkg"
         }
       ]
     },
