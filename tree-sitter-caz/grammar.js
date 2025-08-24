@@ -29,8 +29,7 @@ module.exports = grammar({
       $.identifier,
       $.decl_const,
       $.parameter_list_defn,
-      '>>',
-      $._type,
+      optional(seq('>>', $._type)),
       $.scope
     ),
 

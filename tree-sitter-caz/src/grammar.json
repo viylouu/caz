@@ -43,12 +43,25 @@
           "name": "parameter_list_defn"
         },
         {
-          "type": "STRING",
-          "value": ">>"
-        },
-        {
-          "type": "SYMBOL",
-          "name": "_type"
+          "type": "CHOICE",
+          "members": [
+            {
+              "type": "SEQ",
+              "members": [
+                {
+                  "type": "STRING",
+                  "value": ">>"
+                },
+                {
+                  "type": "SYMBOL",
+                  "name": "_type"
+                }
+              ]
+            },
+            {
+              "type": "BLANK"
+            }
+          ]
         },
         {
           "type": "SYMBOL",

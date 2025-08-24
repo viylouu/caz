@@ -3,7 +3,7 @@
 // commen1s
 /* comm2nts
 comm3nts */
-main :~ (args: []str) >> raw {
+main :~ (args: []str) {
     io::println("hello world")
     //return x
 }
