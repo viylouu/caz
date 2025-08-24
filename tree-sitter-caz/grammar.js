@@ -119,7 +119,8 @@ module.exports = grammar({
     _preproc: $ => choice(
       $.preproc_import,
       $.preproc_extern,
-      $.preproc_use
+      $.preproc_use,
+      $.preproc_load
     ),
 
     preproc_import: $ => seq(
@@ -141,6 +142,11 @@ module.exports = grammar({
     preproc_use: $ => seq(
       '#use',
       $.pkg
+    ),
+
+    preproc_load: $ => seq(
+      '#load',
+      $.parameter_list
     ),
 
     identifier: $ => /[a-z]+/,

@@ -180,6 +180,21 @@
     }
   },
   {
+    "type": "preproc_load",
+    "named": true,
+    "fields": {},
+    "children": {
+      "multiple": false,
+      "required": true,
+      "types": [
+        {
+          "type": "parameter_list",
+          "named": true
+        }
+      ]
+    }
+  },
+  {
     "type": "preproc_use",
     "named": true,
     "fields": {},
@@ -243,6 +258,10 @@
           "named": true
         },
         {
+          "type": "preproc_load",
+          "named": true
+        },
+        {
           "type": "preproc_use",
           "named": true
         },
@@ -294,6 +313,10 @@
           "named": true
         },
         {
+          "type": "preproc_load",
+          "named": true
+        },
+        {
           "type": "preproc_use",
           "named": true
         }
@@ -306,6 +329,10 @@
   },
   {
     "type": "#imp",
+    "named": false
+  },
+  {
+    "type": "#load",
     "named": false
   },
   {

@@ -409,6 +409,10 @@
         {
           "type": "SYMBOL",
           "name": "preproc_use"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "preproc_load"
         }
       ]
     },
@@ -472,6 +476,19 @@
         {
           "type": "SYMBOL",
           "name": "pkg"
+        }
+      ]
+    },
+    "preproc_load": {
+      "type": "SEQ",
+      "members": [
+        {
+          "type": "STRING",
+          "value": "#load"
+        },
+        {
+          "type": "SYMBOL",
+          "name": "parameter_list"
         }
       ]
     },
