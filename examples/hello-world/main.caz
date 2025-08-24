@@ -1,8 +1,6 @@
 #lib <std::io>
 
-#imp <..route::note::aaa>
-
-
+//#imp <route::note::aaa>
 
 // commen1s
 /* comm2nts
@@ -10,7 +8,7 @@ comm3nts */
 main :~ (args: []str) {
     io::println("hello world")
 
-    ..route::note::aaa::wsg("cone")
+    //route::note::aaa::wsg("cone")
 
     /*abc :~ struct << epic_clAss {
         hello: guy = epic
