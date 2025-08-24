@@ -1,8 +1,6 @@
-# Cas
-cas is a quiero language designed to only be convienent for viylouu and zope to use
+# Caz
+caz is a qop (quiero oriented programming) lang designed to only be convienent for viylouu and zope to use to make stuff  
 
 ## Where to find documentation
-You can find the documentation for cas at (insert link) we cant afford our own domain for now
-Alternativley you can find the documentation below
+You can find the documentation for caz in the github wiki (located at the top of the page in the *wiki* tab)  
 
-## hi
