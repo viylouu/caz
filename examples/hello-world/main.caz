@@ -1,4 +1,4 @@
-#imp <std::io>
+#lib <std::io>
 
 // commen1s
 /* comm2nts
