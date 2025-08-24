@@ -1,15 +1,21 @@
 #lib <std::io>
 
+#imp <..route::note::aaa>
+
+
+
 // commen1s
 /* comm2nts
 comm3nts */
 main :~ (args: []str) {
     io::println("hello world")
 
-    abc :~ struct << epic_clAss {
+    ..route::note::aaa::wsg("cone")
+
+    /*abc :~ struct << epic_clAss {
         hello: guy = epic
         hi: guy ~ regula
-    }
+    }*/
 }
 
 // string fix

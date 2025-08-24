@@ -135,9 +135,11 @@ module.exports = grammar({
 
     string: $ => /"([^"\\]|\\.)*"/,
 
+    back_dir: $ => /\./,
+
     pkg: $ => prec.left(seq(
-      $.identifier,
-      repeat(seq('::', $.identifier))
+      repeat(choice($.back_dir, seq($.identifier, '::'))),
+      $.identifier
     )),
 
     _preproc: $ => choice(

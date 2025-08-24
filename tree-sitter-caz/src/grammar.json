@@ -430,25 +430,20 @@
       "type": "SEQ",
       "members": [
         {
-          "type": "CHOICE",
-          "members": [
-            {
-              "type": "SEQ",
-              "members": [
-                {
-                  "type": "SYMBOL",
-                  "name": "pkg"
-                },
-                {
-                  "type": "STRING",
-                  "value": "::"
-                }
-              ]
-            },
-            {
-              "type": "BLANK"
-            }
-          ]
+          "type": "REPEAT",
+          "content": {
+            "type": "SEQ",
+            "members": [
+              {
+                "type": "SYMBOL",
+                "name": "pkg"
+              },
+              {
+                "type": "STRING",
+                "value": "::"
+              }
+            ]
+          }
         },
         {
           "type": "SYMBOL",
@@ -485,31 +480,44 @@
       "type": "PATTERN",
       "value": "\"([^\"\\\\]|\\\\.)*\""
     },
+    "back_dir": {
+      "type": "PATTERN",
+      "value": "\\."
+    },
     "pkg": {
-      "type": "PREC_LEFT",
+      "type": "PREC_RIGHT",
       "value": 0,
       "content": {
         "type": "SEQ",
         "members": [
           {
-            "type": "SYMBOL",
-            "name": "identifier"
-          },
-          {
             "type": "REPEAT",
             "content": {
-              "type": "SEQ",
+              "type": "CHOICE",
               "members": [
                 {
-                  "type": "STRING",
-                  "value": "::"
+                  "type": "SYMBOL",
+                  "name": "back_dir"
                 },
                 {
-                  "type": "SYMBOL",
-                  "name": "identifier"
+                  "type": "SEQ",
+                  "members": [
+                    {
+                      "type": "SYMBOL",
+                      "name": "identifier"
+                    },
+                    {
+                      "type": "STRING",
+                      "value": "::"
+                    }
+                  ]
                 }
               ]
             }
+          },
+          {
+            "type": "SYMBOL",
+            "name": "identifier"
           }
         ]
       }

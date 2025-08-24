@@ -131,6 +131,10 @@
       "required": true,
       "types": [
         {
+          "type": "back_dir",
+          "named": true
+        },
+        {
           "type": "identifier",
           "named": true
         }
@@ -506,6 +510,10 @@
   {
     "type": "as",
     "named": false
+  },
+  {
+    "type": "back_dir",
+    "named": true
   },
   {
     "type": "comment",
