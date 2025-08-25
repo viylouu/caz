@@ -38,4 +38,26 @@ main :: proc() {
     }
 
     for rule, sym in parser.grammar do print_rule(rule, 0, sym)
+
+    fmt.println("\ninput:")
+    fmt.print(src)
+
+    fmt.println("\nresulting ast:")
+
+    succ, _, maybe_ast := parser.match_rule(parser.grammar[.tok_start].(parser.Rule), src, 0, .tok_start)
+    assert(succ, "yayaya")
+    ast := maybe_ast.?
+
+    print_tok :: proc(tok: parser.Token, indent: int) {
+        fmt.printf("%*s[%s, \"%s\"", indent*2, "", parser.tok_name[tok.type], tok.val)
+
+        if len(tok.fields) == 0 do fmt.printf("]\n")
+        else {
+            fmt.println(", fields: [")
+            for field in tok.fields do print_tok(field, indent+1)
+            fmt.printf("%*s]\n", indent*2, "")
+        }
+    }
+
+    print_tok(ast, 0)
 }

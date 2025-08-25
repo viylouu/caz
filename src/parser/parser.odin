@@ -102,3 +102,79 @@ tok_name := [Token_Type]string{
     .tok_ident = "IDENT",
     .tok_num = "NUMBER"
 }
+
+
+
+
+skip_whitespace :: proc(input: string, pos: int) -> int {
+    pos := pos
+    for pos < len(input) {
+        c := input[pos]
+        if c != ' ' && c != '\t' && c != '\n' && c != '\r' do break
+        pos += 1
+    }
+    return pos
+}
+
+match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (bool, int, Maybe(Token)) {
+    start_pos := pos
+    pos := skip_whitespace(input, pos)
+
+    switch rule.type {
+        case .TOKEN:
+            assert(rule.expr != nil, "no regex? wtf?")
+            reg := rule.expr.?
+
+            cap, ok := regex.match(reg, input[pos:])
+            if ok do return true, pos + len(cap.groups[0]), Token{type = rule.ref, val = cap.groups[0], fields = nil}
+            else do return false, pos, nil
+
+        case .REF:
+            target_rule := grammar[rule.ref]
+            switch g in target_rule {
+            case Rule: return match_rule(g, input, pos, rule.ref)
+            case string: return match_rule(token(g), input, pos, rule.ref)
+            }
+
+        case .SEQ:
+            childs := make([]Token, len(rule.fields))
+            for field, i in rule.fields {
+                pos = skip_whitespace(input, pos)
+                ok, pos, child := match_rule(field, input, pos, sym)
+                if !ok do return false, start_pos, nil
+                if _, ok := child.? ; ok do childs[i] = child.?
+            }
+            return true, pos, Token{sym, "", childs}
+
+        case .CHOICE:
+            for field in rule.fields {
+                pos = skip_whitespace(input, pos)
+                ok, new_pos, child := match_rule(field, input, pos, sym)
+                if ok do return true, new_pos, Token{sym, "", {child.?}}
+            }
+            return false, start_pos, nil
+
+        case .OPTIONAL:
+            pos = skip_whitespace(input, pos)
+            ok, new_pos, child := match_rule(rule.fields[0], input, pos, sym)
+            if ok do return true, new_pos, child
+            return true, pos, nil
+
+        case .REPEAT:
+            childs := [dynamic]Token{}
+            for {
+                pos = skip_whitespace(input, pos)
+                ok, new_pos, child := match_rule(rule.fields[0], input, pos, sym)
+                if !ok || new_pos == pos do break
+                pos = new_pos
+                if _, ok := child.? ; ok {
+                    if child.?.fields == nil do append(&childs, child.?)
+                    else do append(&childs, ..child.?.fields) 
+                }
+            }
+            return true, pos, Token{sym, "", childs[:]}
+    }
+
+    return false, pos, nil
+}
+
