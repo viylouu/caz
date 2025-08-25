@@ -21,14 +21,19 @@ main :: proc() {
         else { rule := r.(parser.Rule) 
         #partial switch rule.type {
             case .TOKEN:
-                fmt.printf("%*s[%s, TOKEN, valid = %v]\n", indent*2, "", parser.tok_name[sym], rule.expr != nil)
+                fmt.printf("%*s[%s, TOKEN, valid = %v", indent*2, "", parser.tok_name[sym], rule.expr != nil)
             case .REF:
-                fmt.printf("%*s[%s, REF, %s]\n", indent*2, "", parser.tok_name[sym], parser.tok_name[rule.ref])
+                fmt.printf("%*s[%s, REF, %s", indent*2, "", parser.tok_name[sym], parser.tok_name[rule.ref])
             case:
-                fmt.printf("%*s[%s, %s]\n", indent*2, "", parser.tok_name[sym], parser.rule_name[rule.type])
+                fmt.printf("%*s[%s, %s", indent*2, "", parser.tok_name[sym], parser.rule_name[rule.type])
             }
 
-            for field in rule.fields do print_rule(field, indent+1, .tok_none)
+            if len(rule.fields) == 0 do fmt.printf("]\n")
+            else {
+                fmt.println(", fields: [")
+                for field in rule.fields do print_rule(field, indent+1, .tok_none)
+                fmt.printf("%*s]\n", indent*2, "")
+            }
         }
     }
 
