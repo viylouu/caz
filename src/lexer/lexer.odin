@@ -13,17 +13,17 @@ Regex :: regex.Regular_Expression
 grammars := [Token_Type]Rule{
     .tok_none = Rule{}, .tok_err = Rule{},
     .tok_ignore = rule_token(.tok_ignore, "[ \t\r\n]*"),
-    .tok_start = rule_repeat_ref(.tok_expr),
+    .tok_start = rule_repeat(rule_seq_ref(.tok_expr, .tok_comment)),
 
     .tok_ident = rule_token(.tok_ident, "^[a-zA-Z_][a-zA-Z0-9_]+"),
     .tok_num =   rule_token(.tok_num, "^[0-9]+"),
 
     .tok_expr =  rule_choice_ref(.tok_ident, .tok_num),
 
-    /*.tok_comment = rule_choice(
-            rule_token(.tok_comment, "//.*"),*/
+    .tok_comment = rule_seq(
+            rule_token(.tok_comment, "//.*"),
             //rule_token(.tok_comment, "/\\*[.|\\n]*?\\*/")
-        //)
+        )
 }
 
 
@@ -57,7 +57,7 @@ Token_Type :: enum {
     tok_ident,
     tok_num,
 
-    //tok_comment
+    tok_comment
 }
 
 tok_name := [Token_Type]string{
@@ -89,7 +89,7 @@ tok_name := [Token_Type]string{
     .tok_ident = "IDENT",
     .tok_num = "NUM",
 
-    //.tok_comment = "COMMENT"
+    .tok_comment = "COMMENT"
 }
 
 Token :: struct {
@@ -125,9 +125,9 @@ Rule :: struct {
 
 
 ref :: proc(toks: []Token_Type) -> []Rule {
-    rules := make([]Rule, len(toks))
-    for t, i in toks { rules[i].type = .REF ;; rules[i].ref = t }
-    return rules
+    rules: [dynamic]Rule
+    for t in toks do  append(&rules, Rule{.REF, nil, nil, t})
+    return rules[:]
 }
 
 
@@ -160,19 +160,25 @@ rule_token :: proc(type: Token_Type, str: string) -> Rule {
         }
     }
 
+    assert(err == nil, "aah scary!")
+
     return Rule{.TOKEN, reg, nil, type}
 }
 
 rule_optional :: proc(rule: Rule) -> Rule {
-    return Rule{.OPTIONAL, nil, {rule}, .tok_none}
+    slice := []Rule{rule}
+    return Rule{.OPTIONAL, nil, slice, .tok_none}
 }; rule_optional_ref :: proc(rule: Token_Type) -> Rule {
-    return Rule{.OPTIONAL, nil, ref({rule}), .tok_none}
+    slice := []Token_Type{rule}
+    return Rule{.OPTIONAL, nil, ref(slice), .tok_none}
 }
 
 rule_repeat :: proc(rule: Rule) -> Rule {
-    return Rule{.REPEAT, nil, {rule}, .tok_none}
+    slice := []Rule{rule}
+    return Rule{.REPEAT, nil, slice, .tok_none}
 }; rule_repeat_ref :: proc(rule: Token_Type) -> Rule {
-    return Rule{.REPEAT, nil, ref({rule}), .tok_none}
+    slice := []Token_Type{rule}
+    return Rule{.REPEAT, nil, ref(slice), .tok_none}
 }
 
 rule_choice :: proc(rules: ..Rule) -> Rule { 

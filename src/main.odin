@@ -4,6 +4,7 @@ import "lexer"
 
 import "core:fmt"
 import "core:os"
+import "core:math"
 import "core:strings"
 
 main :: proc() {
