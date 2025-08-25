@@ -17,13 +17,14 @@ grammar := [Token_Type]Gram{
 token :: proc(expr: string) -> Rule {
     reg, err := regex.create(expr)
     assert(err == nil, "invalid regex! (err)")
-    return Rule{ type = .TOKEN, expr = reg, fields = nil }
+    return Rule{ type = .TOKEN, expr = reg, fields = nil, ref = .tok_none }
 }
 
-repeat :: proc(rule: Onion) -> Gram { return Rule{ type = .REPEAT, expr = nil, fields = onions_to_rules([]Onion{rule}) } }
-optional :: proc(rule: Onion) -> Gram { return Rule{ type = .OPTIONAL, expr = nil, fields = onions_to_rules([]Onion{rule}) } }
-choice :: proc(rules: ..Onion) -> Gram { return Rule{ type = .CHOICE, expr = nil, fields = onions_to_rules(rules) } }
-seq :: proc(rules: ..Onion) -> Gram { return Rule{ type = .SEQ, expr = nil, fields = onions_to_rules(rules) } }
+ref :: proc(tok: Token_Type) -> Rule { return Rule{ type = .REF, expr = nil, fields = nil, ref = tok } }
+repeat :: proc(rule: Onion) -> Gram { return Rule{ type = .REPEAT, expr = nil, fields = onions_to_rules([]Onion{rule}), ref = .tok_none } }
+optional :: proc(rule: Onion) -> Gram { return Rule{ type = .OPTIONAL, expr = nil, fields = onions_to_rules([]Onion{rule}), ref = .tok_none } }
+choice :: proc(rules: ..Onion) -> Gram { return Rule{ type = .CHOICE, expr = nil, fields = onions_to_rules(rules), ref = .tok_none } }
+seq :: proc(rules: ..Onion) -> Gram { return Rule{ type = .SEQ, expr = nil, fields = onions_to_rules(rules), ref = .tok_none } }
 
 onions_to_rules :: proc(rules: []Onion) -> []Rule {
     fields := make([]Rule, len(rules))
@@ -33,10 +34,7 @@ onions_to_rules :: proc(rules: []Onion) -> []Rule {
             case Rule: fields[i] = g
             case string: fields[i] = token(g)
             }
-        case Token_Type: switch g in grammar[r] {
-            case Rule: fields[i] = g
-            case string: fields[i] = token(g)
-            } 
+        case Token_Type: fields[i] = ref(r)        
         }
     }
 
@@ -58,7 +56,8 @@ Gram :: union {
 Rule :: struct {
     type: Rule_Type,
     expr: Maybe(regex.Regular_Expression),
-    fields: []Rule
+    fields: []Rule,
+    ref: Token_Type
 }
 
 Rule_Type :: enum {
@@ -66,7 +65,8 @@ Rule_Type :: enum {
     REPEAT,
     OPTIONAL,
     CHOICE,
-    SEQ
+    SEQ,
+    REF
 }
 
 rule_name := [Rule_Type]string{
@@ -74,7 +74,8 @@ rule_name := [Rule_Type]string{
     .REPEAT = "REPEAT",
     .OPTIONAL = "OPTIONAL",
     .CHOICE = "CHOICE",
-    .SEQ = "SEQ"
+    .SEQ = "SEQ",
+    .REF = "REF"
 }
 
 

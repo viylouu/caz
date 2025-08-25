@@ -13,6 +13,8 @@ main :: proc() {
     src := string(data)
     defer delete(data)
 
+    fmt.println("\nrules:")
+
     print_rule :: proc(r: parser.Gram, indent: int, sym: parser.Token_Type) {
         str, ok := r.(string)
         if ok do fmt.printf("%*s[%s, REGEX/STR, \"%s\"]\n", indent*2, "", parser.tok_name[sym], str)
@@ -20,6 +22,8 @@ main :: proc() {
         #partial switch rule.type {
             case .TOKEN:
                 fmt.printf("%*s[%s, TOKEN, valid = %v]\n", indent*2, "", parser.tok_name[sym], rule.expr != nil)
+            case .REF:
+                fmt.printf("%*s[%s, REF, %s]\n", indent*2, "", parser.tok_name[sym], parser.tok_name[rule.ref])
             case:
                 fmt.printf("%*s[%s, %s]\n", indent*2, "", parser.tok_name[sym], parser.rule_name[rule.type])
             }
