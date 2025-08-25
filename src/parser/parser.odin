@@ -126,15 +126,26 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (boo
             reg := rule.expr.?
 
             cap, ok := regex.match(reg, input[pos:])
-            if ok do return true, pos + len(cap.groups[0]), Token{type = rule.ref, val = cap.groups[0], fields = nil}
+            if ok do return true, pos + len(cap.groups[0]), Token{ type = rule.ref, val = cap.groups[0], fields = nil }
             else do return false, pos, nil
 
         case .REF:
             target_rule := grammar[rule.ref]
+            outs: bool
+            outp: int
+            outt: Maybe(Token)
+
             switch g in target_rule {
-            case Rule: return match_rule(g, input, pos, rule.ref)
-            case string: return match_rule(token(g), input, pos, rule.ref)
+            case Rule: outs, outp, outt = match_rule(g, input, pos, rule.ref)
+            case string: outs, outp, outt = match_rule(token(g), input, pos, rule.ref)
             }
+
+            youtt, ok := outt.?
+            if ok {  
+                youtt.type = rule.ref
+                return outs, outp, youtt
+            } 
+            else do return outs, outp, outt
 
         case .SEQ:
             childs := make([]Token, len(rule.fields))
