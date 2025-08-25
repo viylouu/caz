@@ -15,8 +15,10 @@ grammar := [Token_Type]Gram{
 
 
 token :: proc(expr: string) -> Rule {
+    expr := strings.concatenate([]string{"^(", expr, ")"})
     reg, err := regex.create(expr)
     assert(err == nil, "invalid regex! (err)")
+    delete(expr)
     return Rule{ type = .TOKEN, expr = reg, fields = nil, ref = .tok_none }
 }
 
@@ -106,19 +108,20 @@ tok_name := [Token_Type]string{
 
 
 
-skip_whitespace :: proc(input: string, pos: int) -> int {
+skip_ignore :: proc(input: string, pos: int) -> int {
     pos := pos
-    for pos < len(input) {
-        c := input[pos]
-        if c != ' ' && c != '\t' && c != '\n' && c != '\r' do break
-        pos += 1
+    for {
+        ok, new_pos, _ := match_rule(onions_to_rules([]Onion{grammar[.tok_ignore]})[0], input, pos, .tok_ignore)
+        if !ok || new_pos == pos do break
+        pos = new_pos
     }
     return pos
 }
 
 match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (bool, int, Maybe(Token)) {
     start_pos := pos
-    pos := skip_whitespace(input, pos)
+    //pos := skip_ignore(input, pos)
+    pos := pos
 
     switch rule.type {
         case .TOKEN:
@@ -150,23 +153,22 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (boo
         case .SEQ:
             childs := make([]Token, len(rule.fields))
             for field, i in rule.fields {
-                pos = skip_whitespace(input, pos)
-                ok, pos, child := match_rule(field, input, pos, sym)
-                if !ok do return false, start_pos, nil
-                if _, ok := child.? ; ok do childs[i] = child.?
+                pos = skip_ignore(input, pos)
+                ok, new_pos, child := match_rule(field, input, pos, sym)
+                if ok do return true, new_pos, child
             }
             return true, pos, Token{sym, "", childs}
 
         case .CHOICE:
             for field in rule.fields {
-                pos = skip_whitespace(input, pos)
+                pos = skip_ignore(input, pos)
                 ok, new_pos, child := match_rule(field, input, pos, sym)
                 if ok do return true, new_pos, Token{sym, "", {child.?}}
             }
             return false, start_pos, nil
 
         case .OPTIONAL:
-            pos = skip_whitespace(input, pos)
+            pos = skip_ignore(input, pos)
             ok, new_pos, child := match_rule(rule.fields[0], input, pos, sym)
             if ok do return true, new_pos, child
             return true, pos, nil
@@ -174,13 +176,14 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (boo
         case .REPEAT:
             childs := [dynamic]Token{}
             for {
-                pos = skip_whitespace(input, pos)
+                pos = skip_ignore(input, pos)
                 ok, new_pos, child := match_rule(rule.fields[0], input, pos, sym)
                 if !ok || new_pos == pos do break
                 pos = new_pos
                 if _, ok := child.? ; ok {
-                    if child.?.fields == nil do append(&childs, child.?)
-                    else do append(&childs, ..child.?.fields) 
+                    append(&childs, child.?)
+                    //if child.?.fields == nil do append(&childs, child.?)
+                    //else do append(&childs, ..child.?.fields) 
                 }
             }
             return true, pos, Token{sym, "", childs[:]}
