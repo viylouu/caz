@@ -7,10 +7,26 @@ import "core:text/regex"
 grammar := [Token_Type]Gram{
     .tok_err = "unique1", .tok_none = "unique2",
     .tok_ignore = "[ \t\r\n]*",
-    .tok_start = repeat(choice(.tok_ident, .tok_num)),
+    .tok_start = repeat(choice(._preproc)),
 
-    .tok_ident = "[a-zA-Z_][a-zA-Z0-9_]*",
-    .tok_num = "[0-9\\._]+"
+    ._preproc = choice(
+        .tok_preproc_lib
+        ),
+
+    .tok_preproc_lib = seq(
+        "#lib",
+        "<",
+        .tok_resolve,
+        ">",
+        optional(seq(
+            "as",
+            .tok_ident
+            ))
+        ),
+
+    .tok_resolve = seq(.tok_ident, repeat(seq("::", .tok_ident))),
+
+    .tok_ident = "[a-zA-Z_][a-zA-Z_0-9]*"
 }
 
 
@@ -92,8 +108,12 @@ Token_Type :: enum {
     tok_ignore,
     tok_start,
 
-    tok_ident,
-    tok_num
+    _preproc,
+    tok_preproc_lib,
+
+    tok_resolve,
+
+    tok_ident
 }
 
 tok_name := [Token_Type]string{
@@ -101,8 +121,12 @@ tok_name := [Token_Type]string{
     .tok_ignore = "IGNORE",
     .tok_start = "START",
 
-    .tok_ident = "IDENT",
-    .tok_num = "NUMBER"
+    ._preproc = "_preproc",
+    .tok_preproc_lib = "PREPROC lib",
+    
+    .tok_resolve = "RESOLVE",
+
+    .tok_ident = "IDENT"
 }
 
 
@@ -165,7 +189,7 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (boo
                 ok, new_pos, child := match_rule(field, input, trial_pos, sym)
                 if !ok do continue
                 ret, rok := child.?
-                if rok do return true, new_pos, Token{ type = ret.type, val = ret.val, fields = ret.fields}
+                if rok do return true, new_pos, Token{ type = ret.type, val = ret.val, fields = ret.fields }
             }
             return false, start_pos, nil
 
