@@ -161,9 +161,11 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (boo
 
         case .CHOICE:
             for field in rule.fields {
-                pos = skip_ignore(input, pos)
-                ok, new_pos, child := match_rule(field, input, pos, sym)
-                if ok do return true, new_pos, Token{sym, "", {child.?}}
+                trial_pos := skip_ignore(input, pos)
+                ok, new_pos, child := match_rule(field, input, trial_pos, sym)
+                if !ok do continue
+                ret, rok := child.?
+                if rok do return true, new_pos, Token{ type = ret.type, val = ret.val, fields = ret.fields}
             }
             return false, start_pos, nil
 
@@ -180,11 +182,7 @@ match_rule :: proc(rule: Rule, input: string, pos: int, sym: Token_Type) -> (boo
                 ok, new_pos, child := match_rule(rule.fields[0], input, pos, sym)
                 if !ok || new_pos == pos do break
                 pos = new_pos
-                if _, ok := child.? ; ok {
-                    append(&childs, child.?)
-                    //if child.?.fields == nil do append(&childs, child.?)
-                    //else do append(&childs, ..child.?.fields) 
-                }
+                if ok do append(&childs, child.?)
             }
             return true, pos, Token{sym, "", childs[:]}
     }

@@ -1,1 +1,5 @@
-abc 123 def hi 235aaa3
+#lib <std::io>
+
+main :~ (args: []str) >> raw {
+    io::println("hello world")
+}
