@@ -1,63 +1,99 @@
 package main
 
-import "parser"
+import ts ".."
+import ts_caz "../parsers/caz"
 
+import "core:log"
+import "core:mem"
 import "core:fmt"
 import "core:os"
 
 main :: proc() {
-    fmt.printf("building \"%s\"\n", os.args[1])
+    logger := log.create_console_logger(.Debug when ODIN_DEBUG else .Info, {
+		.Level,
+		.Terminal_Color,
+		.Short_File_Path,
+		.Line,
+	})
+	context.logger = logger
 
-    data, err := os.read_entire_file_from_filename_or_err(os.args[1])
-    assert(err == nil, "failed to load file!")
-    src := string(data)
-    defer delete(data)
+	track: mem.Tracking_Allocator
+	mem.tracking_allocator_init(&track, context.allocator)
+	defer mem.tracking_allocator_destroy(&track)
+	context.allocator = mem.tracking_allocator(&track)
 
-    fmt.println("\nrules:")
+	la: log.Log_Allocator
+	log.log_allocator_init(&la, .Debug, .Human)
+	context.allocator = log.log_allocator(&la)
 
-    print_rule :: proc(r: parser.Gram, indent: int, sym: parser.Token_Type) {
-        str, ok := r.(string)
-        if ok do fmt.printf("%*s[%s, REGEX/STR, \"%s\"]\n", indent*2, "", parser.tok_name[sym], str)
-        else { rule := r.(parser.Rule) 
-        #partial switch rule.type {
-            case .TOKEN:
-                fmt.printf("%*s[%s, TOKEN, valid = %v", indent*2, "", parser.tok_name[sym], rule.expr != nil)
-            case .REF:
-                fmt.printf("%*s[%s, REF, %s", indent*2, "", parser.tok_name[sym], parser.tok_name[rule.ref])
-            case:
-                fmt.printf("%*s[%s, %s", indent*2, "", parser.tok_name[sym], parser.rule_name[rule.type])
-            }
+	compat: ts.Compat_Allocator
+	ts.compat_allocator_init(&compat)
 
-            if len(rule.fields) == 0 do fmt.printf("]\n")
-            else {
-                fmt.println(", fields: [")
-                for field in rule.fields do print_rule(field, indent+1, .tok_none)
-                fmt.printf("%*s]\n", indent*2, "")
+	defer {
+		for _, leak in track.allocation_map {
+			fmt.printf("%v leaked %m\n", leak.location, leak.size)
+		}
+		for bad_free in track.bad_free_array {
+			fmt.printf("%v allocation %p was freed badly\n", bad_free.location, bad_free.memory)
+		}
+	}
+
+	{
+		ts.set_odin_allocator(ts.compat_allocator(&compat))
+
+		parser := ts.parser_new()
+		defer ts.parser_delete(parser)
+
+		ts.parser_set_odin_logger(parser, &logger, .Debug)
+
+		caz_lang := ts_caz.tree_sitter_caz()
+
+		ok := ts.parser_set_language(parser, caz_lang)
+		fmt.assertf(ok, "version mismatch between tree-sitter-odin (%v) and tree-sitter itself", ts.language_version(caz_lang))
+
+		data, read_ok := os.read_entire_file(os.args[1])
+		fmt.assertf(read_ok, "reading current file at \"%s\" failed", os.args[1])
+		defer delete(data)
+		source := string(data)
+
+		tree := ts.parser_parse_string(parser, source)
+		assert(tree != nil)
+		defer ts.tree_delete(tree)
+
+		root := ts.tree_root_node(tree)
+
+		// child := ts.node_named_child(root, 0)
+		// fmt.println(ts.node_text(child, source))
+
+		/*{
+			query, err_offset, err := ts.query_new(caz_lang, ts_caz.HIGHLIGHTS)
+			fmt.assertf(err == nil, "could not new a query, %v at %v", err, err_offset)
+			defer ts.query_delete(query)
+
+			cursor := ts.query_cursor_new()
+			defer ts.query_cursor_delete(cursor)
+
+			ts.query_cursor_exec(cursor, query, root)
+
+			for match, cap_idx in ts.query_cursor_next_capture(cursor) {
+				cap := match.captures[cap_idx]
+				if len(ts.query_predicates_for_pattern(query, u32(match.pattern_index))) > 0 {
+					continue
+				}
+				fmt.printf("%q: %s", ts.node_text(cap.node, source), ts.query_capture_name_for_id(query, cap.index))
+				fmt.println()
+			}
+		}*/
+
+        print_tree :: proc(node: ts.Node, source: string, indent: int) {
+            fmt.printf("%*s%s: %q\n", indent*2, "", ts.node_type(node), ts.node_text(node, source))
+            n := ts.node_named_child_count(node)
+            for i :u32= 0; i < n; i += 1 {
+                child := ts.node_named_child(node, i)
+                print_tree(child, source, indent + 1)
             }
         }
-    }
 
-    for rule, sym in parser.grammar do print_rule(rule, 0, sym)
-
-    fmt.println("\ninput:")
-    fmt.print(src)
-
-    fmt.println("\nresulting ast:")
-
-    succ, _, maybe_ast := parser.match_rule(parser.grammar[.tok_start].(parser.Rule), src, 0, .tok_start)
-    assert(succ, "yayaya")
-    ast := maybe_ast.?
-
-    print_tok :: proc(tok: parser.Token, indent: int) {
-        fmt.printf("%*s[%s, \"%s\"", indent*2, "", parser.tok_name[tok.type], tok.val)
-
-        if len(tok.fields) == 0 do fmt.printf("]\n")
-        else {
-            fmt.println(", fields: [")
-            for field in tok.fields do print_tok(field, indent+1)
-            fmt.printf("%*s]\n", indent*2, "")
-        }
-    }
-
-    print_tok(ast, 0)
+        print_tree(root, source, 0)
+	}
 }
