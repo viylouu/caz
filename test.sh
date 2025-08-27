@@ -7,7 +7,11 @@ fi
 
 gitty "[$(date '+%m-%d-%Y %I:%M:%S %p')] AUTO UPDATE via ./test.sh"
 cd /home/viylouu/odin-tree-sitter
-odin run build -- install-parser -name:caz -parser:https://github.com/viylouu/tree-sitter-caz -path:/media/storage/projects/langs/caz_test/parsers/caz -yes
+rm -r /media/storage/projects/langs/caz/parsers/caz
+odin run build -- install-parser -name:caz -parser:https://github.com/viylouu/tree-sitter-caz #-path:/media/storage/projects/langs/caz_test/parsers/caz -yes
+mkdir /media/storage/projects/langs/caz/parsers/caz
+mv parsers/caz/parser.a /media/storage/projects/langs/caz/parsers/caz/
+mv parsers/caz/caz.odin /media/storage/projects/langs/caz/parsers/caz/
 cd /media/storage/projects/langs/caz
 #clear
 cat examples/hello-world/main.caz
