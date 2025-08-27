@@ -1,2 +1,2 @@
 #extern puts :~ (val: str) >> i32
-println :~ (val: str) >> raw { puts(val) }
+println :~ (val: str) { puts(val) }
