@@ -1,5 +1,5 @@
 #lib <std::io>
 
-main :~ (args: []str) >> raw {
+main :~ (args: []str) {
     io::println("hello world")
 }
