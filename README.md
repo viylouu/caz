@@ -3,5 +3,5 @@ caz is a qop (quiero oriented programming) lang designed to only be convienent f
 you can find the parser (treesitter) [here](https://github.com/viylouu/tree-sitter-caz)  
 
 ## Where to find documentation
-You can find the documentation for caz in the github wiki (located at the top of the page in the *wiki* tab)  
+You can find the documentation for caz in the github wiki (located at the top of the page in the *wiki* tab, or if you're lazy, [this totally epic hyperlink](https://github.com/viylouu/caz/wiki))  
 
