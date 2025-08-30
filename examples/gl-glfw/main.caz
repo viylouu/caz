@@ -1,0 +1,29 @@
+#lib <ext::opengl> as gl
+#lib <ext::glfw> as fw
+
+main :~ (args: []str) {
+    assert(fw::init(), "failed to init glfw!")
+    #defer fw::terminate()
+
+    fw::window_hint(fw::CONTEXT_VERSION_MAJOR 3)
+    fw::window_hint(fw::CONTEXT_VERSION_MINOR, 3)
+    fw::window_hint(fw::OPENGL_PROFILE, fw::OPENGL_CORE_PROFILE)
+
+    handle: *fw::window = fw::create_window(800,600, "hello window", nil,nil)
+    #defer fw::destroy_window(handle)
+    assert(handle != nil, "failed to create window!")
+
+    fw::make_context_current(handle)
+
+    fw::swap_interval(1)
+
+    
+    for !fw::window_should_close(handle) {
+        fw::poll_events()
+
+        gl::clear_color(.2, .3, .3, 1)
+        gl::clear(gl::COLOR_BUFFER_BIT)
+
+        fw::swap_buffers(handle)
+    }
+}
